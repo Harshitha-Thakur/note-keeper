@@ -6,10 +6,13 @@ This is a simple note-keeping application with a Flask backend and a React front
 
 1. Clone the repository.
 2. Build the Docker images without using the cache:
+
     ```sh
     docker-compose build --no-cache
     ```
+
 3. Start the application using Docker Compose:
+
     ```sh
     docker-compose up
     ```
