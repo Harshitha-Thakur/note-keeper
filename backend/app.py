@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request
+from flask import Flask, jsonify, render_template, request, send_from_directory
 from flask_cors import CORS
 from config import Config
 from models import db, User
@@ -6,9 +6,8 @@ from flask_jwt_extended import JWTManager, create_access_token
 from routes.note_routes import note_routes
 from routes.auth_routes import auth_bp
 from extensions import socketio, cache
-import logging, os
+import logging
 from logging.handlers import RotatingFileHandler
-from flask import send_from_directory
 
 app = Flask(__name__)
 app.config.from_object(Config)
@@ -50,6 +49,19 @@ def handle_exception(e):
 @app.route('/')
 def index():
     return render_template('index.html')
+
+@app.errorhandler(500)
+def internal_error(error):
+    return jsonify({"error": "Internal Server Error"}), 500
+
+@app.route('/favicon.ico', methods=['GET'])
+def favicon():
+    return '', 204
+
+# Serve static files
+@app.route('/<path:path>', methods=['GET'])
+def static_proxy(path):
+    return send_from_directory('static', path)
 
 app.register_blueprint(note_routes, url_prefix='/api')
 app.register_blueprint(auth_bp, url_prefix='/auth')
